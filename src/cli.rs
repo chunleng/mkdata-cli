@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
@@ -18,8 +20,36 @@ pub enum MainCommands {
 
 #[derive(Subcommand, Debug)]
 pub enum GenerateSubcommands {
-    #[command(about = "Generate CSV data (TODO)")]
-    CSV,
+    #[cfg(feature = "csv")]
+    #[command(about = "Generate CSV data")]
+    CSV {
+        #[arg(
+            short,
+            long,
+            default_value = "./output.csv",
+            help = "Number of rows to generate"
+        )]
+        path: Box<Path>,
+
+        #[arg(
+            short,
+            long,
+            default_value_t = 10,
+            value_name = "NO_OF_ROWS",
+            help = "Number of rows to generate"
+        )]
+        rows: usize,
+
+        #[arg(
+            short,
+            long = "col",
+            required = true,
+            value_name = "COLUMN_NAME",
+            value_delimiter = ',',
+            help = "List of column names"
+        )]
+        cols: Vec<String>,
+    },
     #[command(about = "Generate JSON data (TODO)")]
     JSON,
     #[command(about = "Generate PARQUET data (TODO)")]
